@@ -7,17 +7,44 @@ const twitter = new twit({
   access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
 });
 
-module.exports = user => {
-  return twitter
-    .get('statuses/user_timeline', {
+const getTweets = user => {
+  const _getTweets = (user, last_id = null) => {
+    let params = {
       screen_name: user,
       count: 200,
-      trim_user: true
-    })
-    .then(response => {
-      return response.data.map(tweetData => tweetData.text);
-    })
-    .catch(error => {
-      return error;
-    });
+      include_rts: false
+    };
+
+    if (last_id) {
+      params.max_id = last_id;
+    }
+
+    return twitter
+      .get('statuses/user_timeline', params)
+      .then(response => {
+        tweets = tweets.concat(response.data.map(tweetData => tweetData.text));
+
+        // if (tweets.length >= 3200) {
+        //   return tweets;
+        // }
+        if (depth > 10) {
+          return tweets;
+        }
+        depth++;
+        last_id = response.data[response.data.length - 1].id_str;
+        return _getTweets(user, last_id);
+      })
+      .catch(error => {
+        console.log(error);
+        return error;
+      });
+  };
+
+  let tweets = [];
+  let depth = 1;
+  return _getTweets(user).then(response => {
+    return tweets;
+  });
 };
+
+module.exports = getTweets;
