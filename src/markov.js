@@ -45,8 +45,7 @@ module.exports = {
     };
 
     this.generate = function() {
-      //      let current = this.beginnings.choice();
-      let current = Object.keys(this.ngrams).choice();
+      let current = this.beginnings.choice();
       let output = current.tokenize();
 
       for (let i = 0; i < this.max; i++) {
@@ -54,9 +53,7 @@ module.exports = {
           let possible_next = this.ngrams[current];
           let next = possible_next.choice();
           output.push(next);
-          current = output
-            .slice(output.length - this.n, output.length)
-            .join(' ');
+          current = output.slice(output.length - this.n, output.length).join(' ');
         } else {
           break;
         }

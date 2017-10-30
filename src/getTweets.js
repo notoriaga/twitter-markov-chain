@@ -23,10 +23,6 @@ const getTweets = user => {
       .get('statuses/user_timeline', params)
       .then(response => {
         tweets = tweets.concat(response.data.map(tweetData => tweetData.text));
-
-        // if (tweets.length >= 3200) {
-        //   return tweets;
-        // }
         if (depth > 10) {
           return tweets;
         }

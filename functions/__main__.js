@@ -20,17 +20,16 @@ module.exports = (users, context, callback) => {
 
   Promise.all(feedPromises)
     .then(feeds => {
-      console.log(feeds[0].length, feeds[1].length);
       feeds.map(feed => {
         feed.map(tweet => {
           generator.feed(tweet);
         });
       });
-      let rets = []
+      let markovTweets = [];
       for (let i = 0; i < 20; i++) {
-        rets.push(generator.generate())
+        markovTweets.push(generator.generate());
       }
-      return callback(null, rets);
+      return callback(null, markovTweets);
     })
     .catch(error => {
       return callback(error);
