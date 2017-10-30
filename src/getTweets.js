@@ -22,10 +22,16 @@ const getTweets = user => {
     return twitter
       .get('statuses/user_timeline', params)
       .then(response => {
-        tweets = tweets.concat(response.data.map(tweetData => tweetData.text));
         if (depth > 10) {
           return tweets;
         }
+
+        tweets = tweets.concat(
+          response.data
+            .filter(tweetData => tweetData.lang === 'en')
+            .map(tweetData => tweetData.text)
+        );
+
         depth++;
         last_id = response.data[response.data.length - 1].id_str;
         return _getTweets(user, last_id);
