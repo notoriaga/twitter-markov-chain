@@ -1,18 +1,12 @@
-Array.prototype.choice = function() {
-  let i = Math.floor(Math.random() * this.length);
-  return this[i];
+const casual = require('talisman/tokenizers/tweets/casual');
+
+const choice = arr => {
+  let index = Math.floor(Math.random() * arr.length);
+  return arr[index];
 };
 
-String.prototype.tokenize = function() {
-  return this.replace(/[.\"\/!$%\^&\*;{}=\-//_`~():—,?]/g, '')
-    .replace(/\s{2,}/g, ' ')
-    .split(/\s+/)
-    .map(word => {
-      return word.toLowerCase();
-    })
-    .filter(word => {
-      return !/(http)/.test(word);
-    });
+const tokenize = str => {
+  return casual(str).filter(token => !token.startsWith('http'));
 };
 
 module.exports = {
@@ -23,8 +17,8 @@ module.exports = {
     this.beginnings = [];
 
     this.feed = function(text) {
-      let tokens = text.tokenize();
-
+      let tokens = casual(text);
+      console.log(text, tokens);
       if (tokens.length < this.n) {
         return false;
       }
@@ -45,13 +39,13 @@ module.exports = {
     };
 
     this.generate = function() {
-      let current = this.beginnings.choice();
-      let output = current.tokenize();
+      let current = choice(this.beginnings);
+      let output = casual(current);
 
       for (let i = 0; i < this.max; i++) {
         if (this.ngrams[current]) {
           let possible_next = this.ngrams[current];
-          let next = possible_next.choice();
+          let next = choice(possible_next);
           output.push(next);
           current = output.slice(output.length - this.n, output.length).join(' ');
         } else {

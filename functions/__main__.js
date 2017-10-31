@@ -6,7 +6,7 @@ const markov = require('../src/markov');
 * @returns {any}
 */
 module.exports = (users, context, callback) => {
-  generator = new markov.Generator(2, 30);
+  generator = new markov.Generator(1, 30);
 
   let feedPromises = users.map(user => {
     return getTweets(user)

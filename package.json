@@ -5,6 +5,7 @@
   "author": "steve <steven@stdlib.com>",
   "main": "functions/__main__.js",
   "dependencies": {
+    "talisman": "^0.20.0",
     "twit": "^2.2.9"
   },
   "private": true,
