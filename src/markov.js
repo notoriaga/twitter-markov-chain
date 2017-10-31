@@ -16,7 +16,7 @@ module.exports = {
     this.ngrams = {};
     this.beginnings = [];
 
-    this.feed = function(text) {
+    this.feed = text => {
       let tokens = casual(text);
       console.log(text, tokens);
       if (tokens.length < this.n) {
@@ -38,7 +38,7 @@ module.exports = {
       }
     };
 
-    this.generate = function() {
+    this.generate = () => {
       let current = choice(this.beginnings);
       let output = casual(current);
 
