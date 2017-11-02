@@ -1,12 +1,13 @@
 const getTweets = require('../src/getTweets');
-const markov = require('../src/markov');
+const Markov = require('../src/markov');
 
+
+const fs = require('fs');
 /**
 * @param {array} users
 * @returns {any}
 */
 module.exports = (users, context, callback) => {
-  generator = new markov.Generator(2, 30);
 
   let feedPromises = users.map(user => {
     return getTweets(user)
@@ -20,14 +21,10 @@ module.exports = (users, context, callback) => {
 
   Promise.all(feedPromises)
     .then(feeds => {
-      feeds.map(feed => {
-        feed.map(tweet => {
-          generator.feed(tweet);
-        });
-      });
+      markov = new Markov(flatten(feeds))
       let markovTweets = [];
       for (let i = 0; i < 20; i++) {
-        markovTweets.push(generator.generate());
+        markovTweets.push(markov.generate(10));
       }
       return callback(null, markovTweets);
     })
@@ -35,3 +32,7 @@ module.exports = (users, context, callback) => {
       return callback(error);
     });
 };
+
+const flatten = list => list.reduce(
+    (a, b) => a.concat(Array.isArray(b) ? flatten(b) : b), []
+);

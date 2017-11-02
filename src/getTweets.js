@@ -37,7 +37,6 @@ const getTweets = user => {
         return _getTweets(user, last_id);
       })
       .catch(error => {
-        console.log(error);
         return error;
       });
   };
