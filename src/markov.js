@@ -1,25 +1,9 @@
 const salient = require('salient');
+const rita = require('rita');
+
 const tweetTokenizer = new salient.tokenizers.TweetTokenizer();
-const tokenizer = new salient.tokenizers.WordPunctTokenizer();
 
-const choice = arr => {
-  let index = Math.floor(Math.random() * arr.length);
-  return arr[index];
-};
-
-const prepText = text => {
-
-};
-
-const tokenize = str => {
-  let cleanedStr = str.replace(/&amp;/g, '&').replace(/\r?\n|\r/g, '');
-  return tweetTokenizer
-    .tokenize(cleanedStr)
-    .filter(token => !token.startsWith('http'))
-    .map(token => token.toLowerCase());
-};
-
-class Markov {
+module.exports = class Markov {
   constructor(tweets) {
     this.terminals = {};
     this.startwords = [];
@@ -30,8 +14,6 @@ class Markov {
       .replace(/\s+/g, ' ')
       .match(/[^\.!\?]+[\.!\?]+/g)
       .map(sentance => sentance.trim().toLowerCase());
-
-    console.log(hobbit);
 
     for (let i = 0; i < hobbit.length; i++) {
       let tokens = tokenize(hobbit[i]);
@@ -46,6 +28,7 @@ class Markov {
       }
     }
   }
+
   generate(min) {
     let word = choice(this.startwords);
     let tweet = [word];
@@ -70,9 +53,22 @@ class Markov {
 
     return tweet.join(' ');
   }
-}
+};
 
-module.exports = Markov;
+const choice = arr => {
+  let index = Math.floor(Math.random() * arr.length);
+  return arr[index];
+};
+
+const tokenize = str => {
+  let cleanedStr = str.replace(/&amp;/g, '&').replace(/\r?\n|\r/g, '');
+  return tweetTokenizer
+    .tokenize(cleanedStr)
+    .filter(token => !token.startsWith('http'))
+    .map(token => token.toLowerCase());
+};
+
+const prepText = text => {};
 
 const hobbitText = `Chapter I 
 
@@ -848,4 +844,4 @@ We must away, ere break of day,
 To find our long-forgotten gold. 
 
 Bilbo went to sleep with that in his ears, and it gave him very uncomfortable dreams. It was long 
-after the break of day, when he woke up. `;
+after the break of day, when he woke up.`;
