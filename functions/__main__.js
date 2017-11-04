@@ -1,8 +1,7 @@
 const getTweets = require('../src/getTweets');
 const Markov = require('../src/markov');
-
-
 const fs = require('fs');
+
 /**
 * @param {array} users
 * @returns {any}
@@ -21,12 +20,8 @@ module.exports = (users, context, callback) => {
 
   Promise.all(feedPromises)
     .then(feeds => {
-      markov = new Markov(flatten(feeds))
-      let markovTweets = [];
-      for (let i = 0; i < 20; i++) {
-        markovTweets.push(markov.generate(10));
-      }
-      return callback(null, markovTweets);
+      fs.writeFileSync('tweets.txt', feeds[0])
+      return callback(null);
     })
     .catch(error => {
       return callback(error);
