@@ -22,7 +22,7 @@ const getTweets = user => {
     return twitter
       .get('statuses/user_timeline', params)
       .then(response => {
-        if (depth > 10) {
+        if (depth > 20) {
           return tweets;
         }
 

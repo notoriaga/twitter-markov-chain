@@ -1,14 +1,12 @@
 const getTweets = require('../src/getTweets');
-const Markov = require('../src/markov');
-const fs = require('fs');
+const generateTweet = require('../src/generateTweet');
 
 /**
-* @param {array} users
+* @param {array} twitterHandles
 * @returns {any}
 */
-module.exports = (users, context, callback) => {
-
-  let feedPromises = users.map(user => {
+module.exports = (twitterHandles = ['officialjaden'], context, callback) => {
+  let feedPromises = twitterHandles.map(user => {
     return getTweets(user)
       .then(tweets => {
         return tweets;
@@ -20,14 +18,13 @@ module.exports = (users, context, callback) => {
 
   Promise.all(feedPromises)
     .then(feeds => {
-      fs.writeFileSync('tweets.txt', feeds[0])
-      return callback(null);
+      let tweet = generateTweet(flatten(feeds));
+      return callback(null, tweet);
     })
     .catch(error => {
       return callback(error);
     });
 };
 
-const flatten = list => list.reduce(
-    (a, b) => a.concat(Array.isArray(b) ? flatten(b) : b), []
-);
+const flatten = list =>
+  list.reduce((a, b) => a.concat(Array.isArray(b) ? flatten(b) : b), []);

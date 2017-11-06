@@ -1,7 +1,7 @@
 const salient = require('salient');
 const tweetTokenizer = new salient.tokenizers.TweetTokenizer();
 
-class Markov {
+module.exports = class Markov {
   constructor(n) {
     this.startwords = [];
     this.terminals = {};
@@ -57,17 +57,13 @@ class Markov {
       }
     }
 
-    let numCharacters = sentance.reduce((total, word) => {
-      return total + word.length + 2
-    }, 0);
-    // At least min words but under 140 characters 
-    if (sentance.length < min || numCharacters > 140) {
+    if (sentance.length < min) {
       return this.generate(min);
     }
 
     return sentance;
   }
-}
+};
 
 const choice = arr => {
   let index = Math.floor(Math.random() * arr.length);
@@ -81,5 +77,3 @@ const tokenize = str => {
     .filter(token => !token.startsWith('http'))
     .map(token => token.toLowerCase());
 };
-
-module.exports = Markov;

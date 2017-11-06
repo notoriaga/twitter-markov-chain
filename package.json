@@ -5,6 +5,7 @@
   "author": "steve <steven@stdlib.com>",
   "main": "functions/__main__.js",
   "dependencies": {
+    "pos": "^0.4.2",
     "rita": "^1.2.12",
     "salient": "^0.2.1",
     "twit": "^2.2.9"
