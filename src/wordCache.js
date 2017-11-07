@@ -1,7 +1,6 @@
 const START = '__START';
 const END = '__END';
 
-
 const buildWordCache = tweets => {
   let wordCache = tweets.reduce((wordCache, tweet) => {
     let sentence = parseTweet(tweet);
@@ -40,27 +39,27 @@ const buildWordCache = tweets => {
     return wordCache;
   }, {});
 
-Object.keys(wordCache).forEach(word => {
-  let node = wordCache[word];
-  let cumulativeFrequency = Object.keys(node.nextWords).reduce((sum, nextWord) => {
-    let freq = node.nextWords[nextWord];
-    return sum + freq;
-  }, 0);
-  Object.keys(node.nextWords).reduce((sum, nextWord) => {
-    let freq = node.nextWords[nextWord];
-    sum += freq;
-    node.nextWords[nextWord] = {
-      word: nextWord,
-      frequency: freq,
-      weight: freq / cumulativeFrequency,
-      cumulativeWeight: sum / cumulativeFrequency,
-      node: wordCache[nextWord]
-    };
-    return sum;
-  }, 0);
-});
+  Object.keys(wordCache).forEach(word => {
+    let node = wordCache[word];
+    let cumulativeFrequency = Object.keys(node.nextWords).reduce((sum, nextWord) => {
+      let freq = node.nextWords[nextWord];
+      return sum + freq;
+    }, 0);
+    Object.keys(node.nextWords).reduce((sum, nextWord) => {
+      let freq = node.nextWords[nextWord];
+      sum += freq;
+      node.nextWords[nextWord] = {
+        word: nextWord,
+        frequency: freq,
+        weight: freq / cumulativeFrequency,
+        cumulativeWeight: sum / cumulativeFrequency,
+        node: wordCache[nextWord]
+      };
+      return sum;
+    }, 0);
+  });
 
-return wordCache;
+  return wordCache;
 };
 
 const generateTweet = wordCache => {
@@ -78,7 +77,7 @@ const generateTweet = wordCache => {
     }
   };
   let word = START;
-  let tweet = []
+  let tweet = [];
   for (let n = 0; n < 30; n++) {
     let prevWord = word;
     word = chooseNext(prevWord);
@@ -90,14 +89,36 @@ const generateTweet = wordCache => {
       }
     }
     if (word !== START) {
-      tweet.push(word)
+      tweet.push(word);
     }
   }
   console.log(tweet)
-  return tweet.reduce((str, word) => {
-    return ['.', '?', '!', ',', ':'].includes(word) ? str + word
-                                                    : str + ' ' + word
-  }, '').trim();
+  return toOriginalWords(tweet, wordCache)
+    .reduce((str, word) => {
+      return ['.', '?', '!', ',', ':'].includes(word) ? str + word : str + ' ' + word;
+    }, '')
+    .trim();
+};
+
+const toOriginalWords = (tweet, wordCache) => {
+  const chooseOriginal = choices => {
+    let wordList = Object.keys(choices);
+    let wordCount = Object.values(choices).reduce((a, b) => a + b, 0);
+    let r = Math.random() * wordCount;
+    let s = 0;
+    for (let [word, count] of Object.entries(choices)) {
+      s += count;
+      if (r < s) {
+        return word;
+      }
+    }
+    return wordList[0];
+  };
+
+  return tweet.map(word => {
+    let choices = wordCache[word].originalWords;
+    return chooseOriginal(choices)
+  })
 };
 
 const parseTweet = tweet => {

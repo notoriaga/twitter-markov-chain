@@ -6,7 +6,7 @@ const wordCache = require('../src/WordCache');
 * @param {array} twitterHandles
 * @returns {any}
 */
-module.exports = (twitterHandles = ['keithwhor', 'realdonaldtrump'], context, callback) => {
+module.exports = (twitterHandles = ['officialjaden', 'realdonaldtrump'], context, callback) => {
   let feedPromises = twitterHandles.map(user => {
     return getTweets(user)
       .then(tweets => {
@@ -19,20 +19,19 @@ module.exports = (twitterHandles = ['keithwhor', 'realdonaldtrump'], context, ca
 
   Promise.all(feedPromises)
     .then(feeds => {
+      const genTweet = wc => {
+        let tweet = wordCache.generateTweet(wc);
+        if (tweet.length > 140) {
+          return genTweet(wc);
+        }
+        return tweet;
+      };
       let wc = wordCache.buildWordCache(flatten(feeds));
-      let tweet = wordCache.generateTweet(wc);
-
-      // let sorted = Object.keys(wc)
-      //   .sort((w1, w2) => wc[w1].count < wc[w2].count ? 1 : -1)
-      //   .map(word => {
-      //     return {
-      //       word: word,
-      //       count: wc[word].count
-      //     };
-      //   });
+      let tweet = genTweet(wc);
       return callback(null, tweet);
     })
     .catch(error => {
+      console.log(error)
       return callback(error);
     });
 };
