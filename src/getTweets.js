@@ -22,7 +22,7 @@ const getTweets = user => {
     return twitter
       .get('statuses/user_timeline', params)
       .then(response => {
-        if (depth > 20) {
+        if (depth > 10) {
           return tweets;
         }
 
@@ -31,7 +31,6 @@ const getTweets = user => {
             .filter(tweetData => tweetData.lang === 'en')
             .map(tweetData => tweetData.text)
         );
-
         depth++;
         last_id = response.data[response.data.length - 1].id_str;
         return _getTweets(user, last_id);

@@ -1,5 +1,5 @@
-const salient = require('salient');
-const tweetTokenizer = new salient.tokenizers.TweetTokenizer();
+//const salient = require('salient');
+//const tweetTokenizer = new salient.tokenizers.TweetTokenizer();
 
 module.exports = class Markov {
   constructor(n) {
@@ -9,12 +9,12 @@ module.exports = class Markov {
     this.n = n;
   }
 
-  feed(sentance) {
+  feed(sentence) {
     let tokens;
-    if (sentance instanceof Array) {
-      tokens = sentance;
+    if (sentence instanceof Array) {
+      tokens = sentence;
     } else {
-      tokens = tokenize(sentance);
+      //tokens = tokenize(sentence);
     }
 
     if (tokens.length < this.n) {
@@ -40,28 +40,28 @@ module.exports = class Markov {
 
   generate(min) {
     let gram = choice(this.startwords);
-    let sentance;
+    let sentence;
     if (this.n > 1) {
-      sentance = gram.split(' ');
+      sentence = gram.split(' ');
     } else {
-      sentance = [gram];
-    }
+      sentence = [gram];
+    } 
     while (gram in this.ngrams) {
       let possibleNext = this.ngrams[gram];
-      sentance.push(choice(possibleNext));
+      sentence.push(choice(possibleNext));
 
-      gram = sentance.slice(-this.n).join(' ');
+      gram = sentence.slice(-this.n).join(' ');
 
       if (gram in this.terminals) {
         break;
       }
     }
 
-    if (sentance.length < min) {
+    if (sentence.length < min) {
       return this.generate(min);
     }
 
-    return sentance;
+    return sentence;
   }
 };
 
@@ -70,10 +70,10 @@ const choice = arr => {
   return arr[index];
 };
 
-const tokenize = str => {
-  let cleanedStr = str.replace(/&amp;/g, '&').replace(/\r?\n|\r/g, '');
-  return tweetTokenizer
-    .tokenize(cleanedStr)
-    .filter(token => !token.startsWith('http'))
-    .map(token => token.toLowerCase());
-};
+// const tokenize = str => {
+//   let cleanedStr = str.replace(/&amp;/g, '&').replace(/\r?\n|\r/g, '');
+//   return tweetTokenizer
+//     .tokenize(cleanedStr)
+//     .filter(token => !token.startsWith('http'))
+//     .map(token => token.toLowerCase());
+// };
