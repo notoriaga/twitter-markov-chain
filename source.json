@@ -1,0 +1,28 @@
+{
+  "name": "@steve/twitter-markov-chain",
+  "version": "0.0.0",
+  "publish": true,
+  "description": "",
+  "env": [
+    {
+      "name": "TWITTER_CONSUMER_KEY",
+      "defaultValue": "",
+      "description": ""
+    },
+    {
+      "name": "TWITTER_CONSUMER_SECRET",
+      "defaultValue": "",
+      "description": ""
+    },
+    {
+      "name": "TWITTER_ACCESS_TOKEN",
+      "defaultValue": "",
+      "description": ""
+    },
+    {
+      "name": "TWITTER_ACCESS_TOKEN_SECRET",
+      "defaultValue": "",
+      "description": ""
+    }
+  ]
+}

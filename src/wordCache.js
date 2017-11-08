@@ -59,10 +59,13 @@ const buildWordCache = tweets => {
     }, 0);
   });
 
+  delete wordCache[START].nextWords[END];
+
   return wordCache;
 };
 
 const generateTweet = wordCache => {
+
   const chooseNext = word => {
     let node = wordCache[word];
     let r = Math.random();
@@ -76,26 +79,34 @@ const generateTweet = wordCache => {
       }
     }
   };
-  let word = START;
-  let tweet = [];
-  for (let n = 0; n < 30; n++) {
-    let prevWord = word;
-    word = chooseNext(prevWord);
-    if (word === END) {
-      if (n < 3) {
-        word = prevWord;
-      } else {
+
+  const generateSentence = (minLength) => {
+    let word = START;
+    let tweet = [];
+    let length = 0;
+    for (let n = 0; n < 30; n++) {
+      word = chooseNext(word);
+      length += word.length;
+      if (tweet.length + length - 1 > 140) {
+        return tweet;
+      }
+      if (word === END) {
         break;
       }
-    }
-    if (word !== START) {
       tweet.push(word);
     }
+    return tweet.length < minLength ?
+      generateSentence(minLength) :
+      tweet;
   }
-  console.log(tweet)
+
+  let tweet = generateSentence(3);
+
   return toOriginalWords(tweet, wordCache)
     .reduce((str, word) => {
-      return ['.', '?', '!', ',', ':'].includes(word) ? str + word : str + ' ' + word;
+      return ['.', '?', '!', ',', ':', ';'].includes(word)
+        ? str + word
+        : str + ' ' + word;
     }, '')
     .trim();
 };
@@ -117,15 +128,21 @@ const toOriginalWords = (tweet, wordCache) => {
 
   return tweet.map(word => {
     let choices = wordCache[word].originalWords;
-    return chooseOriginal(choices)
-  })
+    return chooseOriginal(choices);
+  });
 };
 
 const parseTweet = tweet => {
   let words = tweet
+    .replace(/\&amp\;/gi, '&')
     .split(' ')
-    .filter(word => !word.match(/^@(.+?)$/gi))
-    .filter(word => !word.match(/^http(s?)\:(.+)$/gi))
+    .filter(word => !word.startsWith('@'))
+    .filter(
+      word =>
+        !word.match(
+          /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi
+        )
+    )
     .join(' ')
     .replace(/([\.,:;!\+&]+)/gi, ' $1 ')
     .replace(/\s+/gi, ' ')

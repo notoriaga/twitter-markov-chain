@@ -1,12 +1,11 @@
-const getTweets = require('../src/getTweets');
-const generateTweet = require('../src/generateTweet');
-const wordCache = require('../src/WordCache');
+const getTweets = require('../src/getTweets.js');
+const wordCache = require('../src/wordCache.js');
 
 /**
 * @param {array} twitterHandles
 * @returns {any}
 */
-module.exports = (twitterHandles = ['officialjaden', 'realdonaldtrump'], context, callback) => {
+module.exports = (twitterHandles = ['officialjaden', 'justintrudeau'], context, callback) => {
   let feedPromises = twitterHandles.map(user => {
     return getTweets(user)
       .then(tweets => {
