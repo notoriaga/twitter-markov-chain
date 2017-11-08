@@ -1,6 +1,6 @@
 {
   "name": "twitter-markov-chain",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "description": "Generates tweets based on given Twitter handles",
   "author": "steve <steven@stdlib.com>",
   "main": "functions/__main__.js",
